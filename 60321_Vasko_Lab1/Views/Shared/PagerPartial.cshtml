@@ -1,0 +1,83 @@
+﻿@model _60321_Vasko_Lab1.Models.PageListViewModel<WebLabs_V2.DAL.Entities.Dish>
+@using System.Text
+@{
+    var groupName = Request.RequestContext.RouteData.Values["group"];
+    var result = new StringBuilder();
+
+    // стрелка влево
+    var liPrevNext = new TagBuilder("li");
+    liPrevNext.InnerHtml = Html.ActionLink("<<", "List",
+        new
+        {
+            group = groupName,
+            page = Model.CurrentPage - 1
+        },
+        new AjaxOptions
+        {
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "List"
+        }).ToString();
+
+    if (Model.CurrentPage == 1)
+    {
+        liPrevNext.AddCssClass("disabled");
+    }
+    result.Append(liPrevNext.ToString());
+
+    // пейджер
+    for (int i = 1; i <= Model.TotalPages; i++)
+    {
+        var li = new TagBuilder("li");
+        //Для выделения номера текущей страницы добавьте код в представление PagerPartial:
+        if (i == Model.CurrentPage)
+        {
+            li.AddCssClass("active");
+        }
+        var a = new TagBuilder("a");
+        //Можно вместо класса «active» использовать класс «disabled»
+        a.MergeAttribute("href", Url.Action("List", new
+        {
+            page = i
+        }));
+        a.InnerHtml = i.ToString();
+        li.InnerHtml = Ajax.RouteLink(i.ToString(),
+                 new
+                 {
+                     action = "List",
+                     group = groupName,
+                     page = i
+                 },
+                    new AjaxOptions
+                    {
+                        UpdateTargetId = "List",
+                        InsertionMode = InsertionMode.Replace
+                    }).ToString();
+
+        result.Append(li.ToString());
+    }
+
+    // стрелка вправо
+    liPrevNext = new TagBuilder("li");
+    liPrevNext.InnerHtml = Html.ActionLink(">>", "List",
+        new
+        {
+            group = groupName,
+            page = Model.CurrentPage + 1
+        },
+        new AjaxOptions
+        {
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "List"
+        }).ToString();
+    if (Model.CurrentPage == Model.TotalPages)
+    {
+        liPrevNext.AddCssClass("disabled");
+    }
+    result.Append(liPrevNext.ToString());
+}
+
+<ul class="pagination">
+    @MvcHtmlString.Create(result.ToString())
+</ul>
+
+

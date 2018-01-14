@@ -1,0 +1,15 @@
+﻿@model _60321_Vasko_Lab1.Models.PageListViewModel<WebLabs_V2.DAL.Entities.Dish>
+@using System.Text;
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>List</h2>
+<div id="List">
+    @Html.Partial("ListPartial", Model)
+</div>
+
+@section SidePanel
+{
+    @Html.Action("Side", "Menu")
+}
